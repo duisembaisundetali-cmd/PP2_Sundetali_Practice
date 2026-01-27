@@ -15,9 +15,12 @@ x = 5
 y = "John"
 print(x, y)
 #4
-x = "awesome"
-
-def myfunc():
-  print("Python is " + x)
-
-myfunc()
+x = "Python "
+y = "is "
+z = "awesome"
+print(x + y + z)
+#5
+x, y, z = "Orange", "Banana", "Cherry"
+print(x)
+print(y)
+print(z)

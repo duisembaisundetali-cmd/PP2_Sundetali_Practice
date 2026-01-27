@@ -22,8 +22,21 @@ z = -5j
 print(type(x))
 print(type(y))
 print(type(z))
+
 #4
-import random
+x = "kbtu"
+y = "book"
+z = "university"
 
-print(random.randrange(1, 10))
+print(type(x))
+print(type(y))
+print(type(z))
 
+#5
+x = 23
+y = 67
+z = 421
+
+print(type(x))
+print(type(y))
+print(type(z))
