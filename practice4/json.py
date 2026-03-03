@@ -1,7 +1,7 @@
 import json
 
 with open('sample-data.json', 'r') as file:
-    data = json.load(file)
+    data = json.loads(file)
 
 print("Interface Status")
 print("=" * 80)
