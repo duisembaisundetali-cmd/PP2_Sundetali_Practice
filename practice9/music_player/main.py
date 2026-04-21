@@ -12,8 +12,7 @@ def main():
     
     base_dir = os.path.dirname(os.path.abspath(__file__))
     track_dir = os.path.join(base_dir, "music", "sample_tracks")
-    track_files = sorted(glob.glob(os.path.join(track_dir, "*.wav")))
-    
+    track_files = sorted(glob.glob(os.path.join(track_dir, "*.mp3")))
     player = MusicPlayer(track_files)
     running = True
 
