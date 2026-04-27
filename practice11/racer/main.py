@@ -7,7 +7,7 @@ pygame.init()
 
 WIDTH = 400
 HEIGHT = 600
-SPEED = 5
+SPEED = 5 
 COINS_COLLECTED = 0
 
 WHITE = (255, 255, 255)
@@ -15,10 +15,12 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
+ORANGE = (255, 165, 0)
 
-font = pygame.font.SysFont("Verdana", 60)#шрифт для текста "Game Over"
-font_small = pygame.font.SysFont("Verdana", 20)#шрифт для текста "Coins"
-game_over = font.render("Game Over", True, BLACK)
+font = pygame.font.SysFont("Verdana", 60)
+font_small = pygame.font.SysFont("Verdana", 20)
+game_over_text = font.render("Game Over", True, BLACK)
 
 DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Racer")
@@ -33,6 +35,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.center = (random.randint(40, WIDTH-40), 0)
 
     def move(self):
+        global SPEED
         self.rect.move_ip(0, SPEED)
         if self.rect.top > HEIGHT:
             self.rect.top = 0
@@ -41,16 +44,31 @@ class Enemy(pygame.sprite.Sprite):
 class Coin(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((30, 30), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, YELLOW, (15, 15), 15)
-        self.rect = self.image.get_rect()
-        self.rect.center = (random.randint(40, WIDTH-40), -50)
+        self.reset_coin()
         
     def move(self):
         self.rect.move_ip(0, 3) 
         if self.rect.top > HEIGHT:
-            self.rect.top = -50
-            self.rect.center = (random.randint(40, WIDTH-40), -50)
+            self.reset_coin()
+
+    def reset_coin(self):
+        self.weight = random.choice([1, 1, 1, 3, 5])
+        
+        if self.weight == 1:
+            color = YELLOW
+            radius = 15
+        elif self.weight == 3:
+            color = GREEN
+            radius = 18
+        else:
+            color = ORANGE
+            radius = 20
+            
+        self.image = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, color, (radius, radius), radius)
+        
+        self.rect = self.image.get_rect()
+        self.rect.center = (random.randint(40, WIDTH-40), -50)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -73,7 +91,7 @@ P1 = Player()
 E1 = Enemy()
 C1 = Coin()
 
-enemies = pygame.sprite.Group()#
+enemies = pygame.sprite.Group()
 enemies.add(E1)
 
 coins = pygame.sprite.Group()
@@ -100,9 +118,9 @@ while True:
         entity.move()
         DISPLAYSURF.blit(entity.image, entity.rect)
 
-    if pygame.sprite.spritecollideany(P1, enemies):#столкновение
+    if pygame.sprite.spritecollideany(P1, enemies):
         pygame.draw.rect(DISPLAYSURF, RED, (0, HEIGHT//2-50, WIDTH, 100))
-        DISPLAYSURF.blit(game_over, (30, HEIGHT//2-30))
+        DISPLAYSURF.blit(game_over_text, (30, HEIGHT//2-30))
         pygame.display.update()
         import time
         time.sleep(2)
@@ -111,9 +129,9 @@ while True:
 
     collected = pygame.sprite.spritecollide(P1, coins, False)
     if collected:
-        COINS_COLLECTED += 1
-        C1.rect.top = -50
-        C1.rect.center = (random.randint(40, WIDTH-40), -50)
+        COINS_COLLECTED += C1.weight
+        SPEED = 5 + (COINS_COLLECTED // 10)
+        C1.reset_coin()
 
     score_text = font_small.render(f"Coins: {COINS_COLLECTED}", True, BLACK)
     DISPLAYSURF.blit(score_text, (WIDTH - 120, 10))

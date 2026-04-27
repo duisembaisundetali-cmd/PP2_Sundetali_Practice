@@ -12,77 +12,77 @@ def main():
         'white': (255, 255, 255)
     }
     
-    current_color = colors['black']
-    mode = 'brush'
+    current_color = colors['black'] #по умолчанию черный цвет
+    mode = 'brush' #режим по умолчанию - кисть
     drawing = False
     
-    canvas = pygame.Surface((800, 600))
+    canvas = pygame.Surface((800, 600)) 
     canvas.fill(colors['white'])
     
-    ui_rect = pygame.Rect(0, 0, 800, 50)
+    ui_rect = pygame.Rect(0, 0, 800, 50) #область для кнопок
     
-    btn_red = pygame.Rect(10, 10, 30, 30)
-    btn_green = pygame.Rect(50, 10, 30, 30)
-    btn_blue = pygame.Rect(90, 10, 30, 30)
-    btn_black = pygame.Rect(130, 10, 30, 30)
-    
-    btn_brush = pygame.Rect(200, 10, 60, 30)
-    btn_rect = pygame.Rect(270, 10, 60, 30)
-    btn_circ = pygame.Rect(340, 10, 60, 30)
-    btn_erase = pygame.Rect(410, 10, 60, 30)
-    
-    font = pygame.font.SysFont(None, 24)
+    btn_red = pygame.Rect(10, 10, 30, 30)#кнопка красного цвета
+    btn_green = pygame.Rect(50, 10, 30, 30)#кнопка зеленого цвета
+    btn_blue = pygame.Rect(90, 10, 30, 30)#кнопка синего цвета
+    btn_black = pygame.Rect(130, 10, 30, 30)#кнопка черного цвета
+    btn_white = pygame.Rect(170, 10, 30, 30)#кнопка белого цвета
+    btn_brush = pygame.Rect(200, 10, 60, 30)#кнопка кисти
+    btn_rect = pygame.Rect(270, 10, 60, 30)#кнопка прямоугольника
+    btn_circ = pygame.Rect(340, 10, 60, 30)#кнопка круга
+    btn_erase = pygame.Rect(410, 10, 60, 30)#кнопка ластика
+
+    font = pygame.font.SysFont(None, 24)#шрифт для текста на кнопках
     start_pos = None
     
-    clock = pygame.time.Clock()
+    clock = pygame.time.Clock() #для контроля FPS
     running = True
 
     while running:
-        for event in pygame.event.get():
+        for event in pygame.event.get(): 
             if event.type == pygame.QUIT:
                 running = False
                 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
+            if event.type == pygame.MOUSEBUTTONDOWN:#нажатие кнопки мыши
+                x, y = event.pos #координаты клика мыши
                 if y <= 50:
-                    if btn_red.collidepoint(x, y): current_color = colors['red']
-                    elif btn_green.collidepoint(x, y): current_color = colors['green']
+                    if btn_red.collidepoint(x, y): current_color = colors['red'] #смена цвета на красный если кликнули по красной кнопке
+                    elif btn_green.collidepoint(x, y): current_color = colors['green'] 
                     elif btn_blue.collidepoint(x, y): current_color = colors['blue']
                     elif btn_black.collidepoint(x, y): current_color = colors['black']
-                    elif btn_brush.collidepoint(x, y): mode = 'brush'
+                    elif btn_white.collidepoint(x, y): current_color = colors['white']
                     elif btn_rect.collidepoint(x, y): mode = 'rect'
                     elif btn_circ.collidepoint(x, y): mode = 'circle'
                     elif btn_erase.collidepoint(x, y): mode = 'eraser'
-                else:
+                else:#начинаем рисовать если кликнули по белой области
                     drawing = True
                     start_pos = event.pos
                     
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONUP: #отпускание кнопки мыши
                 if drawing:
                     drawing = False
                     end_pos = event.pos
                     if start_pos and end_pos:
-                        if mode == 'rect':
-                            r = pygame.Rect(min(start_pos[0], end_pos[0]), min(start_pos[1], end_pos[1]), 
+                        if mode == 'rect':#рисуем прямоугольник от начальной до конечной точки
+                            r = pygame.Rect(min(start_pos[0], end_pos[0]), min(start_pos[1], end_pos[1]), #
                                             abs(start_pos[0] - end_pos[0]), abs(start_pos[1] - end_pos[1]))
                             pygame.draw.rect(canvas, current_color, r)
-                        elif mode == 'circle':
+                        elif mode == 'circle':#рисуем круг с центром в начальной точке и радиусом до конечной точки
                             radius = int(((start_pos[0] - end_pos[0])**2 + (start_pos[1] - end_pos[1])**2)**0.5)
                             pygame.draw.circle(canvas, current_color, start_pos, radius)
                 start_pos = None
                 
-            if event.type == pygame.MOUSEMOTION:
+            if event.type == pygame.MOUSEMOTION:#движение мыши
                 if drawing:
-                    if mode == 'brush':
+                    if mode == 'brush':#рисуем круг в текущей позиции мыши для эффекта кисти
                         pygame.draw.circle(canvas, current_color, event.pos, 5)
-                    elif mode == 'eraser':
+                    elif mode == 'eraser':#рисуем белый круг для эффекта ластика
                         pygame.draw.circle(canvas, colors['white'], event.pos, 15)
 
-        screen.blit(canvas, (0, 0))
+        screen.blit(canvas, (0, 0))#отображаем холст на экране
         
         if drawing and start_pos and mode in ['rect', 'circle']:
-            mouse_pos = pygame.mouse.get_pos()
-            if mode == 'rect':
+            mouse_pos = pygame.mouse.get_pos()#получаем позицию мыши
+            if mode == 'rect':#рисуем контур прямоугольника во время рисования
                 r = pygame.Rect(min(start_pos[0], mouse_pos[0]), min(start_pos[1], mouse_pos[1]), 
                                 abs(start_pos[0] - mouse_pos[0]), abs(start_pos[1] - mouse_pos[1]))
                 pygame.draw.rect(screen, current_color, r, 2)
@@ -90,15 +90,15 @@ def main():
                 radius = int(((start_pos[0] - mouse_pos[0])**2 + (start_pos[1] - mouse_pos[1])**2)**0.5)
                 pygame.draw.circle(screen, current_color, start_pos, radius, 2)
 
-        pygame.draw.rect(screen, (200, 200, 200), ui_rect)
+        pygame.draw.rect(screen, (200, 200, 200), ui_rect)#фон для кнопок
         pygame.draw.rect(screen, colors['red'], btn_red)
         pygame.draw.rect(screen, colors['green'], btn_green)
         pygame.draw.rect(screen, colors['blue'], btn_blue)
         pygame.draw.rect(screen, colors['black'], btn_black)
         
-        pygame.draw.rect(screen, (0,0,0), btn_red, 2 if current_color != colors['red'] else 4)
+        pygame.draw.rect(screen, (0,0,0), btn_red, 2 if current_color != colors['red'] else 4)#обводка для выделения текущего цвета
         
-        def draw_btn(rect, text, is_active):
+        def draw_btn(rect, text, is_active):#функция для отрисовки кнопок с текстом и выделением активной кнопки
             color = (150, 150, 150) if is_active else (220, 220, 220)
             pygame.draw.rect(screen, color, rect)
             pygame.draw.rect(screen, (0, 0, 0), rect, 2)
