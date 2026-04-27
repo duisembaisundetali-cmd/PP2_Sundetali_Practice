@@ -1,0 +1,34 @@
+[
+  {
+	"name": "Ali",
+	"phone": "87087329127",
+	"email": "ali@example.com",
+	"dateOfBirth": "1990-05-15",
+	"category": "Family",
+	"phoneType": "mobile"
+  },
+  {
+	"name": "Tamer",
+	"phone": "87024070544",
+	"email": "tamer@example.com",
+	"dateOfBirth": "1988-12-20",
+	"category": "Work",
+	"phoneType": "work"
+  },
+  {
+	"name": "John",
+	"phone": "87712345678",
+	"email": "john@gmail.com",
+	"dateOfBirth": "1995-03-10",
+	"category": "Friend",
+	"phoneType": "mobile"
+  },
+  {
+	"name": "Jane",
+	"phone": "87787654321",
+	"email": "jane@company.com",
+	"dateOfBirth": "1992-07-25",
+	"category": "Work",
+	"phoneType": "home"
+  }
+]

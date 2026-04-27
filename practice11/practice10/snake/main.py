@@ -13,8 +13,6 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-GOLD = (255, 215, 0)
 
 DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Snake Game")
@@ -42,43 +40,24 @@ class Snake:
             
     def draw(self, surface):
         for segment in self.body:
-            rect = pygame.Rect(segment[0]*CELL_SIZE, segment[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE)#отрисовка сегментов змейки
+            rect = pygame.Rect(segment[0]*CELL_SIZE, segment[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE)
             pygame.draw.rect(surface, GREEN, rect)
 
 class Food:
-    def __init__(self, snake_body):#класс для еды, которая появляется на поле
+    def __init__(self, snake_body):
         self.position = (0,0)
-        self.weight = 1
-        self.color = RED
-        self.timer = 0
         self.randomize_position(snake_body)
         
-    def randomize_position(self, snake_body):#рандомное расположение еды, при этом она не должна появляться на теле змейки
+    def randomize_position(self, snake_body):
         while True:
             pos = (random.randint(0, GRID_WIDTH-1), random.randint(0, GRID_HEIGHT-1))
             if pos not in snake_body:
                 self.position = pos
                 break
-        
-        self.weight = random.choice([1, 1, 3, 5])#случайный вес еды, который влияет на количество очков и время появления
-        if self.weight == 1:
-            self.color = RED
-            self.timer = 50
-        elif self.weight == 3:
-            self.color = BLUE
-            self.timer = 30
-        else:
-            self.color = GOLD
-            self.timer = 20
                 
-    def update(self, snake_body):
-        self.timer -= 1
-        if self.timer <= 0:
-            self.randomize_position(snake_body)
-
     def draw(self, surface):
         rect = pygame.Rect(self.position[0]*CELL_SIZE, self.position[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE)
-        pygame.draw.rect(surface, self.color, rect)
+        pygame.draw.rect(surface, RED, rect)
 
 def main():
     snake = Snake()
@@ -107,24 +86,24 @@ def main():
         
         head_x, head_y = snake.body[0]
         if head_x < 0 or head_x >= GRID_WIDTH or head_y < 0 or head_y >= GRID_HEIGHT:
+            print(f"Game Over! You hit a wall. Score: {score}")
             pygame.quit()
             sys.exit()
             
         if snake.body[0] in snake.body[1:]:
+            print(f"Game Over! You hit yourself. Score: {score}")
             pygame.quit()
             sys.exit()
             
         if snake.body[0] == food.position:
             snake.grow = True
-            score += 10 * food.weight
+            score += 10
             food.randomize_position(snake.body)
             
-            if score >= level * 100:
+            if score % 30 == 0:
                 level += 1
                 base_fps += 2
-        
-        food.update(snake.body)        
-        
+                
         DISPLAYSURF.fill(BLACK)
         snake.draw(DISPLAYSURF)
         food.draw(DISPLAYSURF)
